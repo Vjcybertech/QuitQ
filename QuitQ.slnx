@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="QuitQ.API/QuitQ.API.csproj" />
+  <Project Path="QuitQ.Test/QuitQ.Test.csproj" Id="2c7b51c7-f07b-4036-8419-100f2d4878f4" />
+</Solution>
