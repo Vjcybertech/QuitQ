@@ -107,9 +107,9 @@ public class AdminServiceTests
     [Test]
     public async Task DeleteSeller_DeactivatesSeller()
     {
-        await _service.DeleteSeller(1);
+        await _service.DeleteSeller(2);
 
-        var seller = _context.Users.First(u => u.Id == 1);
+        var seller = _context.Users.First(u => u.Id == 2);
 
         Assert.IsFalse(seller.IsActive);
     }
