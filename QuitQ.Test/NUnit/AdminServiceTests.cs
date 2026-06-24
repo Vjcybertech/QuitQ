@@ -109,7 +109,7 @@ public class AdminServiceTests
     {
         await _service.DeleteSeller(1);
 
-        var seller = _context.Users.First(u => u.Id == 2);
+        var seller = _context.Users.First(u => u.Id == 1);
 
         Assert.IsFalse(seller.IsActive);
     }
