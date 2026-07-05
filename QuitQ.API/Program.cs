@@ -4,6 +4,7 @@ using FluentValidation.AspNetCore;
 using log4net;
 using log4net.Config;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -43,14 +44,17 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
     };
 });
-
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
+builder.Services.AddScoped<IWishlistService, WishlistService>();
+builder.Services.AddScoped<IReviewService, ReviewService>();
+builder.Services.AddScoped<IOfferService, OfferService>();
 builder.Services.AddScoped<IBrandService, BrandService>();
 
 builder.Services.AddFluentValidationAutoValidation();
@@ -58,6 +62,7 @@ builder.Services.AddValidatorsFromAssemblyContaining<RegisterRequestValidator>()
 builder.Services.AddValidatorsFromAssemblyContaining<LoginRequestValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<AddProductRequestValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<AddAddressRequestValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<AddToCartRequestValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<PlaceOrderRequestValidator>();
 
 
@@ -98,7 +103,14 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-
+// CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+        policy.WithOrigins("http://localhost:3000", "http://localhost:5173")
+              .AllowAnyHeader()
+              .AllowAnyMethod());
+});
 
 var logRepository = LogManager.GetRepository(
     System.Reflection.Assembly.GetEntryAssembly());
@@ -151,6 +163,7 @@ app.Use(async (context, next) =>
 app.UseMiddleware<LoggingMiddleware>();
 app.UseMiddleware<ExceptionMiddleware>();
 
+app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
