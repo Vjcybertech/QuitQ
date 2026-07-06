@@ -80,13 +80,7 @@ public class AuthController : ControllerBase
         );
 
         var addresses = await _service.GetAddresses(userId);
-        if (!addresses.Any())
-        {
-            return Ok(ApiResponse<object>.Success(
-                null,
-                "No Address Found.Update user profile to add Address."
-            ));
-        }
+
         return Ok(
             ApiResponse<object>.Success(
                 addresses,
@@ -95,5 +89,59 @@ public class AuthController : ControllerBase
         );
     }
 
-   
+
+    [Authorize(Roles = "Seller")]
+    [HttpGet("seller-products")]
+    public async Task<IActionResult> GetSellerProducts()
+    {
+        var userId = int.Parse(
+            User.FindFirst(ClaimTypes.NameIdentifier)!.Value
+        );
+
+        var products = await _service
+            .GetSellerProducts(userId);
+
+        return Ok(
+            ApiResponse<object>.Success(
+                products,
+                "Seller products retrieved"
+            )
+        );
+    }
+
+    [Authorize(Roles = "Seller")]
+    [HttpGet("seller-orders")]
+    public async Task<IActionResult> GetSellerOrders()
+    {
+        var userId = int.Parse(
+            User.FindFirst(ClaimTypes.NameIdentifier)!.Value
+        );
+
+        var orders = await _service
+            .GetSellerOrders(userId);
+
+        return Ok(
+            ApiResponse<object>.Success(
+                orders,
+                "Seller orders retrieved"
+            )
+        );
+    }
+
+    [Authorize(Roles = "Seller")]
+    [HttpPut("order-status/{id}")]
+    public async Task<IActionResult> UpdateOrderStatus(
+    int id,
+    [FromQuery] string status
+)
+    {
+        await _service.UpdateOrderStatus(id, status);
+
+        return Ok(
+            ApiResponse<object>.Success(
+                null,
+                "Order status updated"
+            )
+        );
+    }
 }
