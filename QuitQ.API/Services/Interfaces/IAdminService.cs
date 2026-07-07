@@ -7,6 +7,7 @@ public interface IAdminService
     Task<object> GetAllSellers();
     Task DeleteUser(int userId);
     Task DeleteSeller(int sellerId);
+    Task ActivateSeller(int sellerId);
     Task VerifySeller(int sellerId, int adminId, string status);
     Task<SalesReportResponse> GetSalesReport();
 }

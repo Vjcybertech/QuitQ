@@ -69,6 +69,30 @@ public class AdminController : ControllerBase
         }
     }
 
+    [HttpPut("seller/{id}/activate")]
+    public async Task<IActionResult> ActivateSeller(int id)
+    {
+        try
+        {
+            await _service.ActivateSeller(id);
+
+            return Ok(
+                ApiResponse<string>.Success(
+                    null,
+                    "Seller activated"
+                )
+            );
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new
+            {
+                ex.Message,
+                Inner = ex.InnerException?.Message
+            });
+        }
+    }
+
     [HttpPut("seller/{id}/verify")]
     public async Task<IActionResult> VerifySeller(int id, string status)
     {

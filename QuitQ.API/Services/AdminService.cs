@@ -99,6 +99,20 @@ public class AdminService : IAdminService
         await _context.SaveChangesAsync();
     }
 
+    public async Task ActivateSeller(int sellerId)
+    {
+        var seller = await _context.Sellers
+            .Include(s => s.User)
+            .FirstOrDefaultAsync(s => s.Id == sellerId);
+
+        if (seller == null)
+            throw new Exception("Seller not found");
+
+        seller.User.IsActive = true;
+
+        await _context.SaveChangesAsync();
+    }
+
     public async Task VerifySeller(int sellerId, int adminId, string status)
     {
         var seller = await _context.Sellers
@@ -108,7 +122,7 @@ public class AdminService : IAdminService
         if (seller == null)
             throw new Exception("Seller not found");
 
-        var validStatuses = new[]{"Pending","Verified","Rejected"};
+        var validStatuses = new[]{"Pending","Verified","Rejected", "Active" };
 
         if (!validStatuses.Contains(status))
         {
