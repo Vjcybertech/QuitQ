@@ -5,7 +5,7 @@ const api = axios.create({
   baseURL: "https://localhost:7267/api",
 });
 
-// Request interceptor: Add JWT token
+
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
 
@@ -16,7 +16,7 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Response interceptor: Handle errors globally
+
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -28,7 +28,7 @@ api.interceptors.response.use(
       window.location.href = "/login";
     }
 
-    // Show error message
+    
     const errorMessage =
       error.response?.data?.message ||
       error.message ||

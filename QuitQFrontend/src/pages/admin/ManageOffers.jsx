@@ -90,7 +90,7 @@ function ManageOffers() {
       );
     }
   };
-
+  const now = new Date().toISOString().slice(0, 16);
   return (
     <div className="container mt-4">
 
@@ -127,6 +127,7 @@ function ManageOffers() {
         <input
           type="datetime-local"
           className="form-control mb-3"
+          min={now}
           onChange={(e) =>
             setFormData({
               ...formData,
@@ -139,6 +140,7 @@ function ManageOffers() {
         <input
           type="datetime-local"
           className="form-control mb-3"
+          min={formData.startDate || now}
           onChange={(e) =>
             setFormData({
               ...formData,

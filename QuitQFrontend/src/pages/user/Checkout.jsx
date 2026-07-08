@@ -45,6 +45,15 @@ function Checkout() {
 
   const [total, setTotal]
     = useState(0);
+  
+  const [offers, setOffers]
+    = useState([]);
+    
+  const [discountedTotal, setDiscountedTotal]
+  = useState(null);
+
+  const [selectedOffer, setSelectedOffer]
+  = useState(null);
 
   useEffect(() => {
 
@@ -53,6 +62,8 @@ function Checkout() {
     loadAddresses();
 
     loadOrderSummary();
+
+    loadOffers();
 
   }, []);
 
@@ -133,6 +144,26 @@ function Checkout() {
       );
     }
   };
+
+  const loadOffers = async () => {
+
+    try {
+  
+      const res =
+        await api.get("/offer");
+  
+      setOffers(res.data.data);
+  
+    } catch (err) {
+  
+      showError(
+        err.response?.data?.message
+      );
+  
+    }
+  
+  };
+
   // PLACE ORDER
   const placeOrder = async () => {
 
@@ -337,24 +368,128 @@ function Checkout() {
                 </div>
               );
             })}
+ <h5 className="mt-4 mb-3">
+  Available Offers
+</h5>
 
+{offers.length > 0 ? (
+
+  offers.map((offer) => (
+
+    <div
+      key={offer.id}
+      className="border rounded p-3 mb-3"
+    >
+
+      <h6>{offer.title}</h6>
+
+      <p className="mb-2">
+        Discount: {offer.discountPercentage}%
+      </p>
+
+      <button
+  className={
+    selectedOffer?.id === offer.id
+      ? "btn btn-danger btn-sm"
+      : "btn btn-primary btn-sm"
+  }
+  onClick={() => {
+
+    // Remove the currently applied offer
+    if (selectedOffer?.id === offer.id) {
+
+      setSelectedOffer(null);
+      setDiscountedTotal(null);
+
+      showSuccess("Offer removed");
+
+      return;
+    }
+
+    // Don't allow another offer while one is active
+    if (selectedOffer) {
+
+      showError(
+        "Only one offer can be applied at a time. Remove the current offer first."
+      );
+
+      return;
+    }
+
+    const totalItems = orderItems.reduce(
+      (sum, item) => sum + item.quantity,
+      0
+    );
+
+    if (totalItems <= 5) {
+
+      showError(
+        "You can avail this offer only when your order contains more than 5 items."
+      );
+
+      return;
+    }
+
+    const originalTotal = orderItems.reduce(
+      (sum, item) =>
+        sum +
+        (item.unitPrice || item.price) * item.quantity,
+      0
+    );
+
+    const discount =
+      originalTotal * (offer.discountPercentage / 100);
+
+    const finalTotal =
+      originalTotal - discount;
+
+    setDiscountedTotal(finalTotal);
+
+    setSelectedOffer(offer);
+
+    showSuccess(
+      `${offer.title} applied successfully`
+    );
+
+  }}
+>
+  {
+    selectedOffer?.id === offer.id
+      ? "Remove Offer"
+      : "Use Offer"
+  }
+</button>
+
+    </div>
+
+  ))
+
+) : (
+
+  <p>No Offers Available</p>
+
+)}
             <hr />
 
             <h4 className="text-end">
 
-              Total: ₹ {
+  Total: ₹ {
 
-                orderItems.reduce(
-                  (total, item) =>
-                    total +
-                    (item.unitPrice || item.price) *
-                    item.quantity,
-                  0
-                )
+    discountedTotal !== null
 
-              }
+      ? discountedTotal.toFixed(2)
 
-            </h4>
+      : orderItems.reduce(
+          (total, item) =>
+            total +
+            (item.unitPrice || item.price) *
+            item.quantity,
+          0
+        ).toFixed(2)
+
+  }
+
+</h4>
 
           </div>
 
