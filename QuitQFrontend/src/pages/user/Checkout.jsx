@@ -386,12 +386,23 @@ function Checkout() {
       <p className="mb-2">
         Discount: {offer.discountPercentage}%
       </p>
+      <p className="text-muted mb-2">
+  Starts On: {new Date(offer.startDate).toLocaleDateString()}
+</p>
 
       <button
   className={
-    selectedOffer?.id === offer.id
+    new Date(offer.endDate) < new Date()
+      ? "btn btn-dark btn-sm"
+      : new Date(offer.startDate) > new Date()
+      ? "btn btn-secondary btn-sm"
+      : selectedOffer?.id === offer.id
       ? "btn btn-danger btn-sm"
       : "btn btn-primary btn-sm"
+  }
+  disabled={
+    new Date(offer.startDate) > new Date() ||
+    new Date(offer.endDate) < new Date()
   }
   onClick={() => {
 
@@ -453,11 +464,15 @@ function Checkout() {
 
   }}
 >
-  {
-    selectedOffer?.id === offer.id
-      ? "Remove Offer"
-      : "Use Offer"
-  }
+{
+  new Date(offer.endDate) < new Date()
+    ? "Expired"
+    : new Date(offer.startDate) > new Date()
+    ? "Coming Soon"
+    : selectedOffer?.id === offer.id
+    ? "Remove Offer"
+    : "Use Offer"
+}
 </button>
 
     </div>

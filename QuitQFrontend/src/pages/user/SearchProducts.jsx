@@ -138,17 +138,36 @@ function SearchProducts() {
 
       <div className="row">
 
-        {products.map((product) => (
+  {products.length > 0 ? (
 
-          <div
-            className="col-md-3 mb-4"
-            key={product.id}
-          >
-            <ProductCard product={product} />
-          </div>
-        ))}
+    products.map((product) => (
 
+      <div
+        className="col-md-3 mb-4"
+        key={product.id}
+      >
+        <ProductCard product={product} />
       </div>
+
+    ))
+
+  ) : (
+
+    <div className="col-12 text-center mt-5">
+
+      <h3 className="text-secondary">
+        No Products Found
+      </h3>
+
+      <p className="text-muted">
+        Try changing your search or filters.
+      </p>
+
+    </div>
+
+  )}
+
+</div>
 
     </div>
   );
