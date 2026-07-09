@@ -11,7 +11,7 @@ import { addToCart } from "../services/cartService";
 function ProductCard({ product }) {
   const navigate = useNavigate();
   const [isWishlisted, setIsWishlisted] = useState(false);
-
+  const [cartCount, setCartCount] = useState(0);
   useEffect(() => {
     const initWishlist = async () => {
       try {
@@ -28,7 +28,7 @@ function ProductCard({ product }) {
   const handleAddToCart = async () => {
     try {
       await addToCart(product.id, 1);
-
+      setCartCount(cartCount + 1);
       if (isWishlisted) {
         await removeFromWishlist(product.id);
         setIsWishlisted(false);
@@ -117,6 +117,7 @@ function ProductCard({ product }) {
             onClick={handleAddToCart}
           >
             Add To Cart
+            {cartCount > 0 && ` (${cartCount})`}
           </button>
 
           <button

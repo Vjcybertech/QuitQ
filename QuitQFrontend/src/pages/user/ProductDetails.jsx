@@ -9,7 +9,7 @@ function ProductDetails() {
   const { id } = useParams();
 
   const [product, setProduct] = useState(null);
-
+  const [cartCount, setCartCount] = useState(0);
   useEffect(() => {
     loadProduct();
   }, []);
@@ -26,6 +26,7 @@ function ProductDetails() {
   const handleAddToCart = async () => {
     try {
       await addToCart(product.id, 1);
+      setCartCount(cartCount + 1);
       showSuccess("Product added to cart");
     } catch (err) {
       showError(err.response?.data?.message || "Unable to add product to cart");
@@ -86,6 +87,7 @@ function ProductDetails() {
 
           <button className="btn btn-primary" onClick={handleAddToCart}>
             Add To Cart
+            {cartCount > 0 && ` (${cartCount})`}
           </button>
 
           <ReviewSection productId={product.id} />
